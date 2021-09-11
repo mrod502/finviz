@@ -1,6 +1,7 @@
 package home
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
@@ -9,6 +10,10 @@ import (
 
 const (
 	NameHomeTable = "t-home-table"
+)
+
+var (
+	ErrNotFound error = errors.New("not found")
 )
 
 type Signal struct {
@@ -66,14 +71,47 @@ func ParseSignal(t *html.Tokenizer) (s *Signal) {
 	}
 }
 
+func FindSignalTable(t *html.Tokenizer) error {
+	for {
+		tt := t.Next()
+
+		switch tt {
+		case html.ErrorToken:
+			return ErrNotFound
+		case html.StartTagToken:
+			if b, _ := t.TagName(); string(b) == "table" {
+
+				for {
+					if _, v, more := t.TagAttr(); string(v) == NameHomeTable {
+						return nil
+					} else if !more {
+						break
+					}
+				}
+			}
+		default:
+		}
+	}
+}
+
 func ParseSignalTable(t *html.Tokenizer) (s *SignalTable) {
 	s = new(SignalTable)
 	passedHeader := false
+	secondTable := false
 	for {
 		tt := t.Next()
 		switch tt {
 		case html.ErrorToken:
 			return
+		case html.EndTagToken:
+			if v, _ := t.TagName(); string(v) == "table" {
+				if secondTable {
+					return
+				} else {
+					secondTable = true
+					passedHeader = false
+				}
+			}
 		case html.StartTagToken:
 			if v, _ := t.TagName(); string(v) == "tr" {
 				if passedHeader {
@@ -85,5 +123,4 @@ func ParseSignalTable(t *html.Tokenizer) (s *SignalTable) {
 		default:
 		}
 	}
-
 }
