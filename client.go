@@ -14,7 +14,11 @@ type Client struct {
 
 func (c *Client) Home() (h *home.Home, err error) {
 	if c.endpoints.Exists("home") {
-		return c.endpoints.Get("home").(*home.Home), nil
+		v, err := c.endpoints.Get("home")
+		if err != nil {
+			return nil, err
+		}
+		return v.(*home.Home), nil
 	}
 	v, err := home.GetHome()
 	if err != nil {

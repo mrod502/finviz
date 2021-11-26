@@ -3,11 +3,11 @@ module github.com/mrod502/finviz
 go 1.17
 
 require (
-	github.com/mrod502/go-cache v0.0.0-20210831190302-c9c92cda5149
-	golang.org/x/net v0.0.0-20210902165921-8d991716f632
+	github.com/mrod502/go-cache v1.1.16
+	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9
 )
 
 require (
 	go.uber.org/atomic v1.9.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
