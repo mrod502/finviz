@@ -3,6 +3,7 @@ package news
 import (
 	"io"
 	"strings"
+	"time"
 
 	"github.com/mrod502/finviz/client"
 	"github.com/mrod502/finviz/utils"
@@ -18,14 +19,36 @@ type NewsTable struct {
 	Articles map[string]Article
 }
 
+func NewClient(cacheDuration time.Duration) *NewsClient {
+	return &NewsClient{
+		finviz:   client.NewHttp(Parse).WithCache(cacheDuration),
+		articles: client.NewHttp(copyBytes).WithCache(cacheDuration),
+	}
+}
+
 type NewsClient struct {
 	finviz   *client.Http[NewsTable]
 	articles *client.Http[[]byte]
 }
 
-func (n *NewsClient) News() (*NewsTable, error) {
-	return nil, nil
+func copyBytes(r io.Reader, v *[]byte) error {
+	b, err := io.ReadAll(r)
+	if err != nil {
+		return err
+	}
+	*v = b
+
+	return nil
 }
+
+func (n *NewsClient) News() (*NewsTable, error) {
+	return n.finviz.Get(`https://finviz.com/news.ashx`)
+}
+
+func (n *NewsClient) Article(url string) (*[]byte, error) {
+	return n.articles.Get(url)
+}
+
 func Parse(r io.Reader, v *NewsTable) error {
 	t := html.NewTokenizer(r)
 	t.Next()
