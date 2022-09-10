@@ -1,8 +1,10 @@
 package home
 
 import (
-	"net/http"
+	"io"
+	"time"
 
+	"github.com/mrod502/finviz/client"
 	"github.com/mrod502/finviz/utils"
 	"golang.org/x/net/html"
 )
@@ -11,26 +13,28 @@ type Home struct {
 	Signals SignalTable
 }
 
-func GetHome() (h *Home, err error) {
-	h = new(Home)
-	req, err := http.NewRequest(http.MethodGet, utils.BaseUri, nil)
-
-	if err != nil {
-		return nil, err
-	}
-	utils.SetHeaders(req)
-	reader, err := utils.GetReader(req)
-
-	if err != nil {
-		return nil, err
-	}
+func Parse(reader io.Reader, h *Home) (err error) {
 
 	t := html.NewTokenizer(reader)
 
 	err = FindSignalTable(t)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	h.Signals = *ParseSignalTable(t)
 	return
+}
+
+type HomeClient struct {
+	*client.Http[Home]
+}
+
+func NewClient(cacheDuration time.Duration) *HomeClient {
+	return &HomeClient{
+		Http: client.NewHttp(Parse).WithCache(cacheDuration),
+	}
+}
+
+func (c *HomeClient) Home() (h *Home, err error) {
+	return c.Get(utils.BaseUri)
 }
