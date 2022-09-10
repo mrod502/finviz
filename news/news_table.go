@@ -14,11 +14,6 @@ type Article struct {
 	Link  string
 }
 
-type Nn struct {
-	Title string
-	Link  string
-}
-
 type NewsTable struct {
 	Articles map[string]Article
 }
