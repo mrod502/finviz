@@ -51,6 +51,9 @@ func (h *Http[T]) getBase(path string) (v *T, err error) {
 }
 
 func (h *Http[T]) WithCache(lifetime time.Duration) *Http[T] {
+	if lifetime == 0 {
+		return h
+	}
 	h.useCache.Store(true)
 	h.cache = gocache.New[*T, string]().WithExpiration(lifetime)
 	return h
