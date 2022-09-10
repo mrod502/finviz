@@ -1,12 +1,9 @@
 package screener
 
 import (
-	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/mrod502/finviz/utils"
-	"golang.org/x/net/html"
 )
 
 type Exchange string
@@ -51,34 +48,11 @@ type Client struct {
 	sorting Sorting
 }
 
-func NewClient() *Client {
+func New() *Client {
 	return &Client{}
 }
 
 func (c *Client) Get() (*Table, error) {
 
 	return &Table{}, nil
-}
-
-func buildRequest(f Filter, s Sorting, page uint) (r *http.Request, err error) {
-	var uri string = Uri
-
-	r, err = http.NewRequest(http.MethodGet, uri, nil)
-	if err != nil {
-		return
-	}
-
-	reader, err := utils.GetReader(r)
-	if err != nil {
-		return
-	}
-
-	t := html.NewTokenizer(reader)
-
-	for {
-		fmt.Println(t)
-		break
-	}
-
-	return
 }
