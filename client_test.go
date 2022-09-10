@@ -8,7 +8,7 @@ import (
 
 func TestClient(t *testing.T) {
 
-	cli, err := NewClient(NewOptions().WithCacheDuration(5 * time.Minute))
+	cli, err := New(NewOptions().WithCacheDuration(5 * time.Minute))
 
 	if err != nil {
 		t.Fatal(err)

@@ -6,8 +6,9 @@ import (
 )
 
 func TestGetHome(t *testing.T) {
+	cli := NewClient(0)
 
-	table, err := GetHome()
+	table, err := cli.Home()
 
 	if err != nil {
 		t.Fatal(err)

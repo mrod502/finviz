@@ -1,19 +1,15 @@
 package home
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
+	"github.com/mrod502/finviz/utils"
 	"golang.org/x/net/html"
 )
 
 const (
 	NameHomeTable = "t-home-table"
-)
-
-var (
-	ErrNotFound error = errors.New("not found")
 )
 
 type Signal struct {
@@ -74,13 +70,11 @@ func ParseSignal(t *html.Tokenizer) (s *Signal) {
 func FindSignalTable(t *html.Tokenizer) error {
 	for {
 		tt := t.Next()
-
 		switch tt {
 		case html.ErrorToken:
-			return ErrNotFound
+			return utils.ErrNotFound
 		case html.StartTagToken:
 			if b, _ := t.TagName(); string(b) == "table" {
-
 				for {
 					if _, v, more := t.TagAttr(); string(v) == NameHomeTable {
 						return nil
