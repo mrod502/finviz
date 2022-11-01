@@ -30,7 +30,7 @@ type Http[T any] struct {
 	*http.Client
 	parse    Parser[T]
 	useCache *atomic.Bool
-	cache    *gocache.Cache[*T, string]
+	cache    *gocache.Cache[string, *T]
 }
 
 func (h *Http[T]) Get(path string) (v *T, err error) {
@@ -56,11 +56,11 @@ func (h *Http[T]) WithCache(lifetime time.Duration) *Http[T] {
 	}
 	if lifetime < 0 {
 		h.useCache.Store(true)
-		h.cache = gocache.New[*T, string]()
+		h.cache = gocache.New[string, *T]()
 		return h
 	}
 	h.useCache.Store(true)
-	h.cache = gocache.New[*T, string]().WithExpiration(lifetime)
+	h.cache = gocache.New[string, *T]().WithExpiration(lifetime)
 	return h
 }
 
